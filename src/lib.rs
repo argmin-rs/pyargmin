@@ -1,15 +1,15 @@
 // use ndarray::Array1;
 // use numpy::{IntoPyArray, PyArrayDyn};
 use argmin::prelude::*;
+use failure::Error;
 use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
 use serde::{Deserialize, Serialize};
-// use std::ptr::NonNull;
 
 #[derive(Serialize, Deserialize)]
 struct PyArgminOp {
     #[serde(skip)]
-    fu: Option<PyObject>,
+    obj: Option<PyObject>,
 }
 
 impl Clone for PyArgminOp {
@@ -17,7 +17,7 @@ impl Clone for PyArgminOp {
         let gil_guard = Python::acquire_gil();
         let py = gil_guard.python();
         PyArgminOp {
-            fu: Some(self.fu.as_ref().unwrap().clone_ref(py)),
+            obj: Some(self.obj.as_ref().unwrap().clone_ref(py)),
         }
     }
 }
@@ -32,6 +32,21 @@ where
     type Param = Vec<f64>;
     type Output = f64;
     type Hessian = ();
+
+    fn apply(&self, x: &Self::Param) -> Result<Self::Output, Error> {
+        let gil_guard = Python::acquire_gil();
+        let py = gil_guard.python();
+        let out: f64 = self
+            .obj
+            .as_ref()
+            .unwrap()
+            .call_method1(py, "apply", ((x[0], x[1]),))
+            .unwrap()
+            .extract(py)
+            .unwrap();
+        println!("{:?}", out);
+        Ok(out)
+    }
 }
 
 #[pyfunction]
@@ -63,9 +78,12 @@ fn closure2(func: PyObject) -> PyResult<()> {
 fn closure3(func: PyObject) -> PyResult<()> {
     let gil_guard = Python::acquire_gil();
     let py = gil_guard.python();
-    let out: f64 = func
-        .call_method1(py, "apply", ((1.0f64, 2.0f64),))?
-        .extract(py)?;
+    let func = PyArgminOp { obj: Some(func) };
+    let out = func.apply(&vec![1.0f64, 2.0f64]);
+    // let out = <PyObject as ArgminOp>::apply(&func, vec![1.0f64, 2.0f64]);
+    // let out: f64 = func
+    //     .call_method1(py, "apply", ((1.0f64, 2.0f64),))?
+    //     .extract(py)?;
     println!("{:?}", out);
     Ok(())
 }

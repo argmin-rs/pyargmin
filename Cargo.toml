@@ -1,0 +1,28 @@
+[package]
+name = "pyargmin"
+version = "0.0.0"
+authors = ["Stefan Kroboth <stefan.kroboth@gmail.com>"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+description = "Mathematical optimization in pure Rust accessible from Python"
+documentation = "https://docs.rs/pyargmin/latest/pyargmin/"
+homepage = "http://argmin-rs.org"
+repository = "https://github.com/argmin-rs/pyargmin"
+readme = "README.md"
+keywords = ["optimization", "math", "science", "HPC"]
+categories = ["science"]
+#license-file = "LICENSE-APACHE"
+exclude = [ 
+	".travis.yml",
+	"push_docs",
+]
+
+[lib]
+name = "pyargmin"
+crate-type = ["cdylib"]
+
+[dependencies]
+# argmin_core = { path = "../argmin-core" }
+argmin = { path = "../argmin", features = ["ctrlc", "ndarrayl"]}
+pyo3 = { version = "0.6.0", features = ["extension-module"] }
+serde = "*"

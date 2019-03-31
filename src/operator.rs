@@ -7,6 +7,7 @@
 
 use argmin::prelude::*;
 use pyo3::prelude::*;
+use pyo3::types::PyAny;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -17,8 +18,12 @@ pub struct PyArgminOp {
 
 impl PyArgminOp {
     /// Constructor
-    pub fn new(obj: PyObject) -> Self {
-        PyArgminOp { obj: Some(obj) }
+    pub fn new(obj: &PyObject) -> Self {
+        let gil_guard = Python::acquire_gil();
+        let py = gil_guard.python();
+        PyArgminOp {
+            obj: Some(obj.clone_ref(py)),
+        }
     }
 }
 
@@ -29,6 +34,14 @@ impl Clone for PyArgminOp {
         PyArgminOp {
             obj: Some(self.obj.as_ref().unwrap().clone_ref(py)),
         }
+    }
+}
+
+impl<'source> FromPyObject<'source> for PyArgminOp {
+    fn extract(ob: &'source PyAny) -> PyResult<Self> {
+        let gil_guard = Python::acquire_gil();
+        let py = gil_guard.python();
+        Ok(PyArgminOp::new(&ob.to_object(py)))
     }
 }
 
@@ -51,14 +64,13 @@ where
             .as_ref()
             .unwrap()
             .call_method1(py, "apply", ((x[0], x[1]),))
-            .map_err(|e| ArgminError::ImpossibleError {
-                text: format!("{:?}", e).to_string(),
+            .map_err(|e| ArgminError::NotImplemented {
+                text: format!("apply method is not implemented: {:?}", e).to_string(),
             })?
             .extract(py)
             .map_err(|e| ArgminError::ImpossibleError {
-                text: format!("{:?}", e).to_string(),
+                text: format!("Wrong return type from apply method: {:?}", e).to_string(),
             })?;
-        // println!("{:?}", out);
         Ok(out)
     }
 }

@@ -7,21 +7,34 @@
 
 // use ndarray::Array1;
 // use numpy::{IntoPyArray, PyArrayDyn};
+mod executor;
 mod operator;
 
 use crate::operator::*;
 use argmin::prelude::*;
+use executor::*;
 use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
 
 #[pyfunction]
 /// blah
-fn closure(func: PyObject) -> PyResult<()> {
-    let func = PyArgminOp::new(func);
+fn closure(obj: PyObject) -> PyResult<()> {
+    let func = PyArgminOp::new(&obj);
     let out = func.apply(&vec![1.0f64, 2.0f64]);
     println!("Rust: {:?}", out);
     Ok(())
 }
+
+// #[pyfunction]
+// /// Get an executor
+// // pub fn new(op: O, solver: S, init_param: O::Param) -> Self {
+// fn executor(
+//     op: PyArgminOp,
+//     solver: PyObject,
+//     init_param: PyObject,
+// ) -> PyResult<Executor<PyArgminOp, PyObject>> {
+//     Ok(Executor::new(op, solver, init_param))
+// }
 
 /// python module
 #[pymodule]

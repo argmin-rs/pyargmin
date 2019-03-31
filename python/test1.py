@@ -1,4 +1,12 @@
 #!/usr/bin/python
+
+# Copyright 2019 Stefan Kroboth
+#
+# Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
+# http://apache.org/licenses/LICENSE-2.0> or the MIT license <LICENSE-MIT or
+# http://opensource.org/licenses/MIT>, at your option. This file may not be
+# copied, modified, or distributed except according to those terms.
+
 """
 fu
 """
@@ -14,22 +22,11 @@ class Problem:
         self.a = 1.0
         self.b = 100.0
 
-    def apply(self, x):
+    def apply(self, param):
         """apply"""
-        return x[0]*self.a + x[1]*self.b
+        return param[0]*self.a + param[1]*self.b
 
-
-def blah():
-    """blah"""
-    print("fu")
-
-
-def blah2(num):
-    """blah"""
-    print(num)
 
 prob = Problem()
 
-#  argmin.closure(blah)
-#  argmin.closure2(blah2)
-argmin.closure3(prob)
+argmin.closure(prob)

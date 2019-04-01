@@ -5,14 +5,14 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-// use ndarray::Array1;
-// use numpy::{IntoPyArray, PyArrayDyn};
 mod executor;
 mod operator;
 
 use crate::operator::*;
 use argmin::prelude::*;
 use executor::*;
+use ndarray::Array1;
+use numpy::{IntoPyArray, PyArrayDyn};
 use pyo3::prelude::*;
 use pyo3::wrap_pyfunction;
 
@@ -22,6 +22,16 @@ fn closure(obj: PyObject) -> PyResult<()> {
     let func = PyArgminOp::new(&obj);
     let out = func.apply(&vec![1.0f64, 2.0f64]);
     println!("Rust: {:?}", out);
+    Ok(())
+}
+
+#[pyfunction]
+/// blah
+fn closure3(func: PyObject) -> PyResult<()> {
+    let gil_guard = Python::acquire_gil();
+    let py = gil_guard.python();
+    let blah = Array1::from_vec(vec![1.0f64, 2.0, 3.0]);
+    func.call1(py, (blah.into_pyarray(py),))?;
     Ok(())
 }
 
@@ -40,5 +50,6 @@ fn closure(obj: PyObject) -> PyResult<()> {
 #[pymodule]
 fn pyargmin(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_wrapped(wrap_pyfunction!(closure))?;
+    m.add_wrapped(wrap_pyfunction!(closure3))?;
     Ok(())
 }

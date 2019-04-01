@@ -14,6 +14,11 @@ fu
 import numpy
 import pyargmin as argmin
 
+
+def blah(inp):
+    print(inp)
+
+
 class Problem:
     """blah"""
 
@@ -30,3 +35,4 @@ class Problem:
 prob = Problem()
 
 argmin.closure(prob)
+argmin.closure3(blah)

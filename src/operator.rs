@@ -6,6 +6,7 @@
 // copied, modified, or distributed except according to those terms.
 
 use argmin::prelude::*;
+use ndarray::Array1;
 use pyo3::prelude::*;
 use pyo3::types::PyAny;
 use serde::{Deserialize, Serialize};
@@ -52,7 +53,7 @@ impl ArgminOp for PyArgminOp
 where
     PyArgminOp: Clone,
 {
-    type Param = Vec<f64>;
+    type Param = Array1<f64>;
     type Output = f64;
     type Hessian = ();
 

@@ -10,19 +10,57 @@ mod operator;
 
 use crate::operator::*;
 use argmin::prelude::*;
+use argmin::solver::landweber::Landweber;
 use executor::*;
-use ndarray::Array1;
+use ndarray::{array, Array1};
 use numpy::{IntoPyArray, PyArrayDyn};
+use pyo3::class::methods::{PyMethodDefType, PyMethodsProtocol};
 use pyo3::prelude::*;
+use pyo3::type_object::PyTypeInfo;
 use pyo3::wrap_pyfunction;
 
 #[pyfunction]
 /// blah
 fn closure(obj: PyObject) -> PyResult<()> {
     let func = PyArgminOp::new(&obj);
-    let out = func.apply(&vec![1.0f64, 2.0f64]);
+    let out = func.apply(&array![1.0f64, 2.0f64]);
     println!("Rust: {:?}", out);
     Ok(())
+}
+
+#[pyclass(name=Landweber)]
+struct PyLandweber {
+    solver: Landweber,
+}
+
+#[pymethods]
+impl PyLandweber {
+    #[new]
+    fn new(obj: &PyRawObject, omega: f64) {
+        obj.init({
+            PyLandweber {
+                solver: Landweber::new(omega),
+            }
+        });
+    }
+
+    fn set_omega(&mut self, omega: f64) {
+        println!("fufufu_{}", omega)
+    }
+}
+
+#[pyfunction]
+/// blah
+fn landweber(omega: f64) -> Py<PyLandweber> {
+    let gil_guard = Python::acquire_gil();
+    let py = gil_guard.python();
+    Py::new(
+        py,
+        PyLandweber {
+            solver: Landweber::new(omega),
+        },
+    )
+    .unwrap()
 }
 
 #[pyfunction]
@@ -51,5 +89,6 @@ fn closure3(func: PyObject) -> PyResult<()> {
 fn pyargmin(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_wrapped(wrap_pyfunction!(closure))?;
     m.add_wrapped(wrap_pyfunction!(closure3))?;
+    m.add_wrapped(wrap_pyfunction!(landweber))?;
     Ok(())
 }

@@ -36,3 +36,7 @@ prob = Problem()
 
 argmin.closure(prob)
 argmin.closure3(blah)
+
+solver = argmin.landweber(0.1)
+print(solver)
+solver.set_omega(3.0);

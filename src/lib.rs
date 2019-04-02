@@ -13,8 +13,7 @@ use argmin::prelude::*;
 use argmin::solver::landweber::Landweber;
 use executor::*;
 use ndarray::{array, Array1};
-use numpy::{IntoPyArray, PyArrayDyn};
-use pyo3::class::methods::{PyMethodDefType, PyMethodsProtocol};
+use numpy::*;
 use pyo3::prelude::*;
 use pyo3::type_object::PyTypeInfo;
 use pyo3::wrap_pyfunction;
@@ -49,6 +48,21 @@ impl PyLandweber {
     }
 }
 
+impl PyLandweber {
+    fn inner(&self) -> Landweber {
+        self.solver.clone()
+    }
+}
+
+// impl<'source> FromPyObject<'source> for &'source PyLandweber {
+//     fn extract(ob: &'source PyAny) -> PyResult<Self> {
+//         // let gil_guard = Python::acquire_gil();
+//         // let py = gil_guard.python();
+//         // Ok(PyLandweber::new(&ob.to_object(py)))
+//         Ok(ob.downcast_mut()?)
+//     }
+// }
+
 #[pyfunction]
 /// blah
 fn landweber(omega: f64) -> Py<PyLandweber> {
@@ -73,16 +87,32 @@ fn closure3(func: PyObject) -> PyResult<()> {
     Ok(())
 }
 
-// #[pyfunction]
-// /// Get an executor
-// // pub fn new(op: O, solver: S, init_param: O::Param) -> Self {
-// fn executor(
-//     op: PyArgminOp,
-//     solver: PyObject,
+#[pyfunction]
+/// Get an executor
+// pub fn new(op: O, solver: S, init_param: O::Param) -> Self {
+// fn new(
+//     obj: &PyRawObject,
+//     op: PyObject,
+//     solver: &mut PyLandweber,
 //     init_param: PyObject,
-// ) -> PyResult<Executor<PyArgminOp, PyObject>> {
-//     Ok(Executor::new(op, solver, init_param))
-// }
+fn executor(op: PyObject, solver: &mut PyLandweber, init_param: PyObject) -> Py<PyExecutor> {
+    let gil_guard = Python::acquire_gil();
+    let py = gil_guard.python();
+    let init_param: &PyArray<f64, Ix1> = init_param.extract(py).unwrap();
+    Py::new(
+        py,
+        PyExecutor {
+            exec: Executor::new(
+                op.extract(py).unwrap(),
+                solver.inner(),
+                init_param.as_array_mut().to_owned(),
+            )
+            .max_iters(20)
+            .add_observer(ArgminSlogLogger::term(), ObserverMode::Always),
+        },
+    )
+    .unwrap()
+}
 
 /// python module
 #[pymodule]
@@ -90,5 +120,6 @@ fn pyargmin(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_wrapped(wrap_pyfunction!(closure))?;
     m.add_wrapped(wrap_pyfunction!(closure3))?;
     m.add_wrapped(wrap_pyfunction!(landweber))?;
+    m.add_wrapped(wrap_pyfunction!(executor))?;
     Ok(())
 }

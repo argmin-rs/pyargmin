@@ -11,7 +11,7 @@
 fu
 """
 
-import numpy
+import numpy as np
 import pyargmin as argmin
 
 
@@ -29,7 +29,9 @@ class Problem:
 
     def apply(self, param):
         """apply"""
-        return param[0]*self.a + param[1]*self.b
+        out = (self.a - param[0])**2 + self.b * (param[1] - param[0]**2)**2
+        print(out)
+        return out
 
 
 prob = Problem()
@@ -39,4 +41,8 @@ argmin.closure3(blah)
 
 solver = argmin.landweber(0.1)
 print(solver)
-solver.set_omega(3.0);
+solver.set_omega(3.0)
+
+executor = argmin.executor(prob, solver, np.array([0.0, 0.0]))
+print(executor)
+executor.run()

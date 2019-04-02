@@ -33,6 +33,14 @@ class Problem:
         print(out)
         return out
 
+    def gradient(self, param):
+        x = param[0]
+        y = param[1]
+        out = np.array(
+                [-2 * self.a + 4 * self.b * x**3 - 4 * self.b * x * y + 2 * x,
+                 2 * self.b * (y - x**2)])
+        return out
+
 
 prob = Problem()
 

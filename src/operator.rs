@@ -7,6 +7,7 @@
 
 use argmin::prelude::*;
 use ndarray::Array1;
+use numpy::*;
 use pyo3::prelude::*;
 use pyo3::types::PyAny;
 use serde::{Deserialize, Serialize};
@@ -73,5 +74,22 @@ where
                 text: format!("Wrong return type from apply method: {:?}", e).to_string(),
             })?;
         Ok(out)
+    }
+
+    fn gradient(&self, x: &Self::Param) -> Result<Self::Param, Error> {
+        let gil_guard = Python::acquire_gil();
+        let py = gil_guard.python();
+        let bla = self
+            .obj
+            .as_ref()
+            .unwrap()
+            .call_method1(py, "gradient", ((x[0], x[1]),))
+            .map_err(|e| ArgminError::NotImplemented {
+                text: format!("gradient method is not implemented: {:?}", e).to_string(),
+            })?;
+        let out: &PyArray1<f64> = bla.extract(py).map_err(|e| ArgminError::ImpossibleError {
+            text: format!("Wrong return type from apply method: {:?}", e).to_string(),
+        })?;
+        Ok(out.as_array_mut().to_owned())
     }
 }

@@ -37,20 +37,20 @@ class Problem:
         x = param[0]
         y = param[1]
         out = np.array(
-                [-2 * self.a + 4 * self.b * x**3 - 4 * self.b * x * y + 2 * x,
-                 2 * self.b * (y - x**2)])
+                [-2.0 * self.a + 4.0 * self.b * x**3 - 4.0 * self.b * x * y + 2.0 * x,
+                 2.0 * self.b * (y - x**2)])
         return out
 
 
 prob = Problem()
 
-argmin.closure(prob)
-argmin.closure3(blah)
+#  argmin.closure(prob)
+#  argmin.closure3(blah)
 
 solver = argmin.landweber(0.1)
 print(solver)
 solver.set_omega(3.0)
 
-executor = argmin.executor(prob, solver, np.array([0.0, 0.0]))
+executor = argmin.executor(prob, solver, np.array([1.2, 1.2]))
 print(executor)
 executor.run()

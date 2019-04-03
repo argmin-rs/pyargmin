@@ -8,6 +8,7 @@
 mod executor;
 mod operator;
 
+use crate::operator::ParamType;
 use crate::operator::*;
 use argmin::prelude::*;
 use argmin::solver::landweber::Landweber;
@@ -22,7 +23,7 @@ use pyo3::wrap_pyfunction;
 /// blah
 fn closure(obj: PyObject) -> PyResult<()> {
     let func = PyArgminOp::new(&obj);
-    let out = func.apply(&array![1.0f64, 2.0f64]);
+    let out = func.apply(&ParamType::Ndarray(array![1.0f64, 2.0f64]));
     println!("Rust: {:?}", out);
     Ok(())
 }
@@ -54,15 +55,6 @@ impl PyLandweber {
     }
 }
 
-// impl<'source> FromPyObject<'source> for &'source PyLandweber {
-//     fn extract(ob: &'source PyAny) -> PyResult<Self> {
-//         // let gil_guard = Python::acquire_gil();
-//         // let py = gil_guard.python();
-//         // Ok(PyLandweber::new(&ob.to_object(py)))
-//         Ok(ob.downcast_mut()?)
-//     }
-// }
-
 #[pyfunction]
 /// blah
 fn landweber(omega: f64) -> Py<PyLandweber> {
@@ -89,12 +81,6 @@ fn closure3(func: PyObject) -> PyResult<()> {
 
 #[pyfunction]
 /// Get an executor
-// pub fn new(op: O, solver: S, init_param: O::Param) -> Self {
-// fn new(
-//     obj: &PyRawObject,
-//     op: PyObject,
-//     solver: &mut PyLandweber,
-//     init_param: PyObject,
 fn executor(op: PyObject, solver: &mut PyLandweber, init_param: PyObject) -> Py<PyExecutor> {
     let gil_guard = Python::acquire_gil();
     let py = gil_guard.python();
@@ -105,7 +91,7 @@ fn executor(op: PyObject, solver: &mut PyLandweber, init_param: PyObject) -> Py<
             exec: Executor::new(
                 op.extract(py).unwrap(),
                 solver.inner(),
-                init_param.as_array_mut().to_owned(),
+                ParamType::Ndarray(init_param.as_array_mut().to_owned()),
             )
             .max_iters(20)
             .add_observer(ArgminSlogLogger::term(), ObserverMode::Always),

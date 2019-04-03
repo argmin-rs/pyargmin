@@ -16,7 +16,7 @@ use executor::*;
 use ndarray::{array, Array1};
 use numpy::*;
 use pyo3::prelude::*;
-use pyo3::type_object::PyTypeInfo;
+// use pyo3::type_object::PyTypeInfo;
 use pyo3::wrap_pyfunction;
 
 #[pyfunction]

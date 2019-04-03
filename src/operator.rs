@@ -11,7 +11,6 @@ use numpy::*;
 use pyo3::prelude::*;
 use pyo3::types::PyAny;
 use serde::{Deserialize, Serialize};
-use std::any::Any;
 
 #[derive(Serialize, Deserialize)]
 pub struct PyArgminOp {

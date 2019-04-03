@@ -11,7 +11,7 @@ use numpy::*;
 use pyo3::prelude::*;
 use pyo3::types::PyAny;
 use serde::{Deserialize, Serialize};
-// use std::any::Any;
+use std::any::Any;
 
 #[derive(Serialize, Deserialize)]
 pub struct PyArgminOp {
@@ -52,42 +52,42 @@ unsafe impl Send for PyArgminOp {}
 unsafe impl Sync for PyArgminOp {}
 
 #[derive(Clone, Serialize, Deserialize)]
-pub enum ParamType {
+pub enum ParamKind {
     Ndarray(ndarray::Array1<f64>),
     Other,
 }
 
-impl std::default::Default for ParamType {
+impl std::default::Default for ParamKind {
     fn default() -> Self {
-        ParamType::Other
+        ParamKind::Other
     }
 }
 
-impl ArgminMul<ParamType, ParamType> for f64 {
+impl ArgminMul<ParamKind, ParamKind> for f64 {
     #[inline]
-    fn mul(&self, other: &ParamType) -> ParamType {
-        if let ParamType::Ndarray(ref y) = other {
-            ParamType::Ndarray(self.mul(y))
+    fn mul(&self, other: &ParamKind) -> ParamKind {
+        if let ParamKind::Ndarray(ref y) = other {
+            ParamKind::Ndarray(self.mul(y))
         } else {
             unimplemented!()
         }
     }
 }
 
-impl ArgminSub<ParamType, ParamType> for ParamType {
+impl ArgminSub<ParamKind, ParamKind> for ParamKind {
     #[inline]
-    fn sub(&self, other: &ParamType) -> ParamType {
-        if let (ParamType::Ndarray(ref x), ParamType::Ndarray(ref y)) = (self, other) {
-            ParamType::Ndarray(x.sub(y))
+    fn sub(&self, other: &ParamKind) -> ParamKind {
+        if let (ParamKind::Ndarray(ref x), ParamKind::Ndarray(ref y)) = (self, other) {
+            ParamKind::Ndarray(x.sub(y))
         } else {
             unimplemented!()
         }
     }
 }
 
-impl ParamType {
+impl ParamKind {
     pub fn ndarray(&self) -> Option<ndarray::Array1<f64>> {
-        if let ParamType::Ndarray(ref x) = self {
+        if let ParamKind::Ndarray(ref x) = self {
             Some(x.clone())
         } else {
             None
@@ -95,7 +95,7 @@ impl ParamType {
     }
 
     pub fn other(&self) -> Option<()> {
-        if let ParamType::Other = *self {
+        if let ParamKind::Other = *self {
             Some(())
         } else {
             None
@@ -107,7 +107,7 @@ impl ArgminOp for PyArgminOp
 where
     PyArgminOp: Clone,
 {
-    type Param = ParamType;
+    type Param = ParamKind;
     type Output = f64;
     type Hessian = ();
 
@@ -115,7 +115,7 @@ where
         let gil_guard = Python::acquire_gil();
         let py = gil_guard.python();
         let param = match x {
-            ParamType::Ndarray(ref x) => x.to_pyarray(py),
+            ParamKind::Ndarray(ref x) => x.to_pyarray(py),
             _ => unimplemented!(),
         };
 
@@ -138,7 +138,7 @@ where
         let gil_guard = Python::acquire_gil();
         let py = gil_guard.python();
         let param = match x {
-            ParamType::Ndarray(ref x) => x.to_pyarray(py),
+            ParamKind::Ndarray(ref x) => x.to_pyarray(py),
             _ => unimplemented!(),
         };
 
@@ -153,6 +153,6 @@ where
         let out: &PyArray1<f64> = bla.extract(py).map_err(|e| ArgminError::ImpossibleError {
             text: format!("Wrong return type from apply method: {:?}", e).to_string(),
         })?;
-        Ok(ParamType::Ndarray(out.as_array_mut().to_owned()))
+        Ok(ParamKind::Ndarray(out.as_array_mut().to_owned()))
     }
 }

@@ -5,7 +5,7 @@
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
 
-use crate::operator::ParamType;
+use crate::operator::ParamKind;
 use crate::operator::PyArgminOp;
 use crate::PyLandweber;
 use argmin::prelude::*;
@@ -36,7 +36,7 @@ impl PyExecutor {
                 exec: Executor::new(
                     op.extract(py)?,
                     solver.inner(),
-                    ParamType::Ndarray(init_param.as_array_mut().to_owned()),
+                    ParamKind::Ndarray(init_param.as_array_mut().to_owned()),
                 )
                 .max_iters(20)
                 .add_observer(ArgminSlogLogger::term(), ObserverMode::Always),

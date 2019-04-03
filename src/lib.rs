@@ -8,7 +8,7 @@
 mod executor;
 mod operator;
 
-use crate::operator::ParamType;
+use crate::operator::ParamKind;
 use crate::operator::*;
 use argmin::prelude::*;
 use argmin::solver::landweber::Landweber;
@@ -23,7 +23,7 @@ use pyo3::wrap_pyfunction;
 /// blah
 fn closure(obj: PyObject) -> PyResult<()> {
     let func = PyArgminOp::new(&obj);
-    let out = func.apply(&ParamType::Ndarray(array![1.0f64, 2.0f64]));
+    let out = func.apply(&ParamKind::Ndarray(array![1.0f64, 2.0f64]));
     println!("Rust: {:?}", out);
     Ok(())
 }
@@ -91,7 +91,7 @@ fn executor(op: PyObject, solver: &mut PyLandweber, init_param: PyObject) -> Py<
             exec: Executor::new(
                 op.extract(py).unwrap(),
                 solver.inner(),
-                ParamType::Ndarray(init_param.as_array_mut().to_owned()),
+                ParamKind::Ndarray(init_param.as_array_mut().to_owned()),
             )
             .max_iters(20)
             .add_observer(ArgminSlogLogger::term(), ObserverMode::Always),

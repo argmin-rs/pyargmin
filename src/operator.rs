@@ -109,6 +109,7 @@ where
     type Param = ParamKind;
     type Output = f64;
     type Hessian = ();
+    type Jacobian = ParamKind;
 
     fn apply(&self, x: &Self::Param) -> Result<Self::Output, Error> {
         let gil_guard = Python::acquire_gil();

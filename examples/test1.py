@@ -12,7 +12,7 @@ fu
 """
 
 import numpy as np
-import pyargmin as argmin
+import argmin
 
 
 def blah(inp):
@@ -37,8 +37,8 @@ class Problem:
         x = param[0]
         y = param[1]
         out = np.array(
-                [-2.0 * self.a + 4.0 * self.b * x**3 - 4.0 * self.b * x * y + 2.0 * x,
-                 2.0 * self.b * (y - x**2)])
+                [-2.0 * self.a + 4.0 * self.b * x**3 - 4.0 * self.b * x * y
+                 + 2.0 * x, 2.0 * self.b * (y - x**2)])
         return out
 
 

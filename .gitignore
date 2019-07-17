@@ -2,3 +2,6 @@
 **/*.rs.bk
 Cargo.lock
 python/pyargmin.so
+build
+*.egg-info
+dist/

@@ -1,6 +1,6 @@
 [package]
 name = "pyargmin"
-version = "0.0.0"
+version = "0.0.1"
 authors = ["Stefan Kroboth <stefan.kroboth@gmail.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
@@ -18,13 +18,14 @@ exclude = [
 ]
 
 [lib]
-name = "pyargmin"
+name = "_lib"
 crate-type = ["cdylib"]
 
 [dependencies]
 # argmin_core = { path = "../argmin-core" }
-argmin = { path = "../argmin", features = ["ctrlc", "ndarrayl"]}
-pyo3 = { version = "0.6.0", features = ["extension-module"] }
+# argmin = { path = "../argmin", features = ["ctrlc", "ndarrayl"]}
+argmin = {version = "0.2.4", features = ["ctrlc", "ndarrayl"]}
+pyo3 = { version = "0.7.0", features = ["extension-module"] }
 serde = "1.0"
-numpy = "0.5.0"
+numpy = "0.6.0"
 ndarray = "*"

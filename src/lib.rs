@@ -102,7 +102,7 @@ fn executor(op: PyObject, solver: &mut PyLandweber, init_param: PyObject) -> Py<
 
 /// python module
 #[pymodule]
-fn pyargmin(_py: Python, m: &PyModule) -> PyResult<()> {
+fn _lib(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_wrapped(wrap_pyfunction!(closure))?;
     m.add_wrapped(wrap_pyfunction!(closure3))?;
     m.add_wrapped(wrap_pyfunction!(landweber))?;

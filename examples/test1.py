@@ -47,9 +47,9 @@ prob = Problem()
 #  argmin.closure(prob)
 #  argmin.closure3(blah)
 
-solver = argmin.landweber(0.1)
+solver = argmin.landweber(0.001)
 print(solver)
-solver.set_omega(3.0)
+#  solver.set_omega(1e-4)
 
 executor = argmin.executor(prob, solver, np.array([1.2, 1.2]))
 print(executor)

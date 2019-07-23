@@ -38,8 +38,7 @@ impl PyExecutor {
                     solver.inner(),
                     ParamKind::Ndarray(init_param.as_array_mut().to_owned()),
                 )
-                .max_iters(20)
-                .add_observer(ArgminSlogLogger::term(), ObserverMode::Always),
+                .max_iters(20), // .add_observer(ArgminSlogLogger::term(), ObserverMode::Always),
             }
         });
         Ok(())
@@ -47,7 +46,8 @@ impl PyExecutor {
 
     fn run(&self) -> PyResult<()> {
         let bla = self.exec.clone();
-        bla.run();
+        let res = bla.run().unwrap();
+        println!("{}", res);
         Ok(())
     }
 

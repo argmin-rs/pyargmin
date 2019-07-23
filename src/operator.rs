@@ -50,7 +50,7 @@ impl<'source> FromPyObject<'source> for PyArgminOp {
 unsafe impl Send for PyArgminOp {}
 unsafe impl Sync for PyArgminOp {}
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub enum ParamKind {
     Ndarray(ndarray::Array1<f64>),
     Other,

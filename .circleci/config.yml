@@ -4,7 +4,7 @@ jobs:
   build-test:
     working_directory: ~/repo
     docker:
-      - image: rust:1.36-buster
+      - image: rust:1.38-buster
     steps:
       - checkout
       - run:
@@ -13,7 +13,7 @@ jobs:
             apt-get update
             apt install -y python3-pip
             python3.7 -m pip install tox 'setuptools-rust>=0.6.0'
-            rustup default nightly-2019-06-04
+            rustup default nightly-2019-07-18
       - run:
           name: install
           command: |

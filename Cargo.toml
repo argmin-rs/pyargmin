@@ -27,5 +27,5 @@ crate-type = ["cdylib"]
 argmin = {version = "0.2.4", features = ["ctrlc", "ndarrayl"]}
 pyo3 = { version = "0.7.0", features = ["extension-module"] }
 serde = "1.0"
-numpy = "0.6.0"
+numpy = "0.7.0"
 ndarray = "*"

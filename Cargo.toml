@@ -28,4 +28,4 @@ argmin = {version = "0.2.4", features = ["ctrlc", "ndarrayl"]}
 pyo3 = { version = "0.8.1", features = ["extension-module"] }
 serde = "1.0"
 numpy = "0.7.0"
-ndarray = "0.12"
+ndarray = "0.13"

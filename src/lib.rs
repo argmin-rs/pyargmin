@@ -74,7 +74,7 @@ fn landweber(omega: f64) -> Py<PyLandweber> {
 fn closure3(func: PyObject) -> PyResult<()> {
     let gil_guard = Python::acquire_gil();
     let py = gil_guard.python();
-    let blah = Array1::from_vec(vec![1.0f64, 2.0, 3.0]);
+    let blah = Array1::from(vec![1.0f64, 2.0, 3.0]);
     func.call1(py, (blah.into_pyarray(py),))?;
     Ok(())
 }

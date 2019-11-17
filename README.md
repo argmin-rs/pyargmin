@@ -1,3 +1,5 @@
+[![Gitter chat](https://badges.gitter.im/argmin-rs/community.png)](https://gitter.im/argmin-rs/community)
+
 # pyargmin
 
 Mathematical optimization in pure Rust accessible from Python

@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/argmin-rs/pyargmin.svg?style=svg)](https://circleci.com/gh/argmin-rs/pyargmin)
+[![Build Status](https://travis-ci.org/argmin-rs/pyargmin.svg?branch=master)](https://travis-ci.org/argmin-rs/pyargmin)
 [![Gitter chat](https://badges.gitter.im/argmin-rs/community.png)](https://gitter.im/argmin-rs/community)
 
 # pyargmin

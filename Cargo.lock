@@ -18,7 +18,7 @@ dependencies = [
 
 [[package]]
 name = "argmin"
-version = "0.2.5"
+version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "approx 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -628,7 +628,7 @@ dependencies = [
 name = "pyargmin"
 version = "0.0.1"
 dependencies = [
- "argmin 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "argmin 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "ndarray 0.13.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "numpy 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "pyo3 0.8.4 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1023,7 +1023,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [metadata]
 "checksum aho-corasick 0.7.6 (registry+https://github.com/rust-lang/crates.io-index)" = "58fb5e95d83b38284460a5fda7d6470aa0b8844d283a0b614b8535e880800d2d"
 "checksum approx 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)" = "f0e60b75072ecd4168020818c0107f2857bb6c4e64252d8d3983f6263b40a5c3"
-"checksum argmin 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)" = "4275731c7017d931f505d30a1648c1de8367dcdb115f108a9bf208d9f5ac5168"
+"checksum argmin 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)" = "753fc20a57efa1ab70341d9eb4f49a32a217fb6a44fed5f2adec705b0373c7da"
 "checksum argmin_core 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)" = "af731e9d96f5503f5cf2d2d3f9c91d1734238172a555e7ab9dc6d93d8301400d"
 "checksum argmin_testfunctions 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "038d36183c6f2d3a09f7db94b289c4d42f801dc587e67ea15d7faf7c868ec249"
 "checksum arrayref 0.3.5 (registry+https://github.com/rust-lang/crates.io-index)" = "0d382e583f07208808f6b1249e60848879ba3543f57c32277bf52d69c2f0f0ee"

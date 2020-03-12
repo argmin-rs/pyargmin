@@ -12,7 +12,7 @@ use pyo3::prelude::*;
 use pyo3::types::PyAny;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct PyArgminOp {
     #[serde(skip)]
     obj: Option<PyObject>,
@@ -73,6 +73,32 @@ impl ArgminMul<ParamKind, ParamKind> for f64 {
     }
 }
 
+
+impl ArgminAdd<ParamKind, ParamKind> for f64 {
+    #[inline]
+    fn add(&self, other: &ParamKind) -> ParamKind {
+        if let ParamKind::Ndarray(ref y) = other {
+            ParamKind::Ndarray(self.add(y))
+        } else {
+            unimplemented!()
+        }
+    }
+}
+
+
+impl ArgminDot<ParamKind, ParamKind> for f64 {
+    #[inline]
+    fn dot(&self, other: &ParamKind) -> ParamKind {
+        if let ParamKind::Ndarray(ref y) = other {
+            ParamKind::Ndarray(self.dot(y))
+        } else {
+            unimplemented!()
+        }
+    }
+}
+
+
+
 impl ArgminSub<ParamKind, ParamKind> for ParamKind {
     #[inline]
     fn sub(&self, other: &ParamKind) -> ParamKind {
@@ -114,6 +140,7 @@ where
     fn apply(&self, x: &Self::Param) -> Result<Self::Output, Error> {
         let gil_guard = Python::acquire_gil();
         let py = gil_guard.python();
+        println!("Calling apply!");
         let param = match x {
             ParamKind::Ndarray(ref x) => x.to_pyarray(py),
             _ => unimplemented!(),
@@ -131,6 +158,7 @@ where
             .map_err(|e| ArgminError::ImpossibleError {
                 text: format!("Wrong return type from apply method: {:?}", e).to_string(),
             })?;
+        println!("cost: {}", out);
         Ok(out)
     }
 
@@ -153,6 +181,7 @@ where
         let out: &PyArray1<f64> = bla.extract(py).map_err(|e| ArgminError::ImpossibleError {
             text: format!("Wrong return type from apply method: {:?}", e).to_string(),
         })?;
+        println!("gradient_inner: {:?}", out);
         Ok(ParamKind::Ndarray(out.as_array_mut().to_owned()))
     }
 }

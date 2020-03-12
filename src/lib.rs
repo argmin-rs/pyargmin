@@ -11,13 +11,16 @@ mod operator;
 use crate::operator::ParamKind;
 use crate::operator::*;
 use argmin::prelude::*;
-use argmin::solver::landweber::Landweber;
+use argmin::solver::quasinewton::LBFGS;
+use argmin::solver::linesearch::MoreThuenteLineSearch;
 use executor::*;
 use ndarray::{array, Array1};
 use numpy::*;
 use pyo3::prelude::*;
 // use pyo3::type_object::PyTypeInfo;
 use pyo3::wrap_pyfunction;
+
+type LBFGS_type = LBFGS<MoreThuenteLineSearch<ParamKind>, ParamKind>;
 
 #[pyfunction]
 /// blah
@@ -28,42 +31,38 @@ fn closure(obj: PyObject) -> PyResult<()> {
     Ok(())
 }
 
-#[pyclass(name=Landweber)]
-struct PyLandweber {
-    solver: Landweber,
+#[pyclass(name=LBFGS)]
+struct PyLBFGS {
+    solver: LBFGS_type,
 }
 
 #[pymethods]
-impl PyLandweber {
+impl PyLBFGS {
     #[new]
-    fn new(obj: &PyRawObject, omega: f64) {
+    fn new(obj: &PyRawObject, m: usize) {
         obj.init({
-            PyLandweber {
-                solver: Landweber::new(omega),
+            PyLBFGS {
+                solver: LBFGS::new(MoreThuenteLineSearch::new(), m),
             }
         });
     }
-
-    fn set_omega(&mut self, omega: f64) {
-        println!("fufufu_{}", omega)
-    }
 }
 
-impl PyLandweber {
-    fn inner(&self) -> Landweber {
+impl PyLBFGS {
+    fn inner(&self) -> LBFGS_type {
         self.solver.clone()
     }
 }
 
 #[pyfunction]
 /// blah
-fn landweber(omega: f64) -> Py<PyLandweber> {
+fn lbfgs(m: usize) -> Py<PyLBFGS> {
     let gil_guard = Python::acquire_gil();
     let py = gil_guard.python();
     Py::new(
         py,
-        PyLandweber {
-            solver: Landweber::new(omega),
+        PyLBFGS {
+            solver: LBFGS::new(MoreThuenteLineSearch::new(), m),
         },
     )
     .unwrap()
@@ -81,7 +80,7 @@ fn closure3(func: PyObject) -> PyResult<()> {
 
 #[pyfunction]
 /// Get an executor
-fn executor(op: PyObject, solver: &mut PyLandweber, init_param: PyObject) -> Py<PyExecutor> {
+fn executor(op: PyObject, solver: &mut PyLBFGS, init_param: PyObject) -> Py<PyExecutor> {
     let gil_guard = Python::acquire_gil();
     let py = gil_guard.python();
     let init_param: &PyArray<f64, Ix1> = init_param.extract(py).unwrap();
@@ -105,7 +104,7 @@ fn executor(op: PyObject, solver: &mut PyLandweber, init_param: PyObject) -> Py<
 fn _lib(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_wrapped(wrap_pyfunction!(closure))?;
     m.add_wrapped(wrap_pyfunction!(closure3))?;
-    m.add_wrapped(wrap_pyfunction!(landweber))?;
+    m.add_wrapped(wrap_pyfunction!(lbfgs))?;
     m.add_wrapped(wrap_pyfunction!(executor))?;
     Ok(())
 }

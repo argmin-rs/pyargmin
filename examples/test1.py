@@ -29,11 +29,13 @@ class Problem:
 
     def apply(self, param):
         """apply"""
+        print("function", param)
         out = (self.a - param[0])**2 + self.b * (param[1] - param[0]**2)**2
         print(out)
         return out
 
     def gradient(self, param):
+        print("\ngradient", param, "\n")
         x = param[0]
         y = param[1]
         out = np.array(
@@ -49,7 +51,6 @@ prob = Problem()
 
 solver = argmin.landweber(0.001)
 print(solver)
-#  solver.set_omega(1e-4)
 
 executor = argmin.executor(prob, solver, np.array([1.2, 1.2]))
 print(executor)

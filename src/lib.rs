@@ -1,4 +1,4 @@
-// Copyright 2019 Stefan Kroboth
+// Copyright 2019-2020 argmin developers
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
 // http://apache.org/licenses/LICENSE-2.0> or the MIT license <LICENSE-MIT or
@@ -73,7 +73,7 @@ fn lbfgs(m: usize) -> Py<PyLBFGS> {
 fn closure3(func: PyObject) -> PyResult<()> {
     let gil_guard = Python::acquire_gil();
     let py = gil_guard.python();
-    let blah = Array1::from_vec(vec![1.0f64, 2.0, 3.0]);
+    let blah = Array1::from(vec![1.0f64, 2.0, 3.0]);
     func.call1(py, (blah.into_pyarray(py),))?;
     Ok(())
 }

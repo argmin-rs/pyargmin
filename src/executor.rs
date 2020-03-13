@@ -8,7 +8,7 @@ use std::f64;
 
 use crate::operator::ParamKind;
 use crate::operator::PyArgminOp;
-use crate::{PyLBFGS, LBFGS_type};
+use crate::{LBFGS_type, PyLBFGS};
 use argmin::prelude::*;
 use argmin::solver::quasinewton::LBFGS;
 use ndarray::arr1;
@@ -51,7 +51,7 @@ impl PyExecutor {
         let res = executor.run().unwrap();
         let x = match res.state.param {
             ParamKind::Ndarray(value) => value,
-            _ => arr1(&[f64::NAN, f64::NAN])
+            _ => arr1(&[f64::NAN, f64::NAN]),
         };
         println!("Something: {:?}", x);
         let gil = Python::acquire_gil();

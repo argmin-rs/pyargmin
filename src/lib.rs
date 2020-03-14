@@ -82,7 +82,12 @@ fn closure3(func: PyObject) -> PyResult<()> {
 /// executor(op, solver, init_param, max_iter=20)
 ///
 /// Get an executor
-fn executor(op: PyObject, solver: &mut PyLBFGS, init_param: PyObject, max_iter: u64) -> Py<PyExecutor> {
+fn executor(
+    op: PyObject,
+    solver: &mut PyLBFGS,
+    init_param: PyObject,
+    max_iter: u64,
+) -> Py<PyExecutor> {
     let gil_guard = Python::acquire_gil();
     let py = gil_guard.python();
     let init_param: &PyArray<f64, Ix1> = init_param.extract(py).unwrap();

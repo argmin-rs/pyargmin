@@ -53,7 +53,6 @@ impl PyExecutor {
             ParamKind::Ndarray(value) => value,
             _ => arr1(&[f64::NAN, f64::NAN]),
         };
-        println!("executor.run x = {:?}", x);
         let gil = Python::acquire_gil();
         let x = PyArray1::from_array(gil.python(), &x);
         Ok(x.to_owned())

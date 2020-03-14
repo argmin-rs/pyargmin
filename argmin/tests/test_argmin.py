@@ -6,7 +6,7 @@ from numpy.testing import assert_allclose
 import argmin
 
 
-def test_rosen():
+def test_rosen_lbfgs():
     # Adapted from scipy.optimize.tests.test_optimize
 
     scipy_opt = pytest.importorskip('scipy.optimize')
@@ -30,5 +30,4 @@ def test_rosen():
 
     executor = argmin.executor(prob, solver, x0, max_iter=100)
     x_opt = executor.run()
-    print("Result x = ", x_opt)
     assert_allclose(x_opt, np.array([1, 1]), rtol=1e-4)

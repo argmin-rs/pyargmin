@@ -147,7 +147,6 @@ impl ArgminSub<ParamKind, ParamKind> for ParamKind {
     }
 }
 
-
 impl ArgminNorm<f64> for ParamKind {
     #[inline]
     fn norm(&self) -> f64 {
@@ -156,10 +155,8 @@ impl ArgminNorm<f64> for ParamKind {
         } else {
             unimplemented!()
         }
-
     }
 }
-
 
 impl ParamKind {
     pub fn ndarray(&self) -> Option<ndarray::Array1<f64>> {
@@ -191,7 +188,6 @@ where
     fn apply(&self, x: &Self::Param) -> Result<Self::Output, Error> {
         let gil_guard = Python::acquire_gil();
         let py = gil_guard.python();
-        println!("Calling apply!");
         let param = match x {
             ParamKind::Ndarray(ref x) => x.to_pyarray(py),
             _ => unimplemented!(),
@@ -209,7 +205,6 @@ where
             .map_err(|e| ArgminError::ImpossibleError {
                 text: format!("Wrong return type from apply method: {:?}", e).to_string(),
             })?;
-        println!("ArgminOp.apply cost: {}", out);
         Ok(out)
     }
 
@@ -232,7 +227,6 @@ where
         let out: &PyArray1<f64> = bla.extract(py).map_err(|e| ArgminError::ImpossibleError {
             text: format!("Wrong return type from apply method: {:?}", e).to_string(),
         })?;
-        println!("ArgminOp.gradient: {:?}", out);
         Ok(ParamKind::Ndarray(out.as_array_mut().to_owned()))
     }
 }

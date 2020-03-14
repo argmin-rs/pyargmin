@@ -15,10 +15,6 @@ import numpy as np
 import argmin
 
 
-def blah(inp):
-    print(inp)
-
-
 class Problem:
     """blah"""
 
@@ -29,13 +25,10 @@ class Problem:
 
     def apply(self, param):
         """apply"""
-        print("function", param)
         out = (self.a - param[0])**2 + self.b * (param[1] - param[0]**2)**2
-        print(out)
         return out
 
     def gradient(self, param):
-        print("\ngradient", param, "\n")
         x = param[0]
         y = param[1]
         out = np.array(
@@ -46,10 +39,7 @@ class Problem:
 
 prob = Problem()
 
-#  argmin.closure(prob)
-#  argmin.closure3(blah)
-
-solver = argmin.landweber(0.001)
+solver = argmin.lbfgs(m=10)
 print(solver)
 
 executor = argmin.executor(prob, solver, np.array([1.2, 1.2]))

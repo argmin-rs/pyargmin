@@ -4,18 +4,20 @@
 // http://apache.org/licenses/LICENSE-2.0> or the MIT license <LICENSE-MIT or
 // http://opensource.org/licenses/MIT>, at your option. This file may not be
 // copied, modified, or distributed except according to those terms.
+use std::f64;
 
 use crate::operator::ParamKind;
 use crate::operator::PyArgminOp;
-use crate::PyLandweber;
+use crate::{LbfgsType, PyLBFGS};
 use argmin::prelude::*;
-use argmin::solver::landweber::Landweber;
+use argmin::solver::quasinewton::LBFGS;
+use ndarray::arr1;
 use numpy::*;
 use pyo3::prelude::*;
 
 #[pyclass(name=Executor)]
 pub struct PyExecutor {
-    pub exec: Executor<PyArgminOp, Landweber>,
+    pub exec: Executor<PyArgminOp, LbfgsType>,
 }
 
 #[pymethods]
@@ -25,7 +27,7 @@ impl PyExecutor {
     fn new(
         obj: &PyRawObject,
         op: PyObject,
-        solver: &mut PyLandweber,
+        solver: &mut PyLBFGS,
         init_param: PyObject,
     ) -> PyResult<()> {
         let gil_guard = Python::acquire_gil();
@@ -44,11 +46,16 @@ impl PyExecutor {
         Ok(())
     }
 
-    fn run(&self) -> PyResult<()> {
-        let bla = self.exec.clone();
-        let res = bla.run().unwrap();
-        println!("{}", res);
-        Ok(())
+    fn run(&self) -> PyResult<(Py<PyArray1<f64>>)> {
+        let executor = self.exec.clone();
+        let res = executor.run().unwrap();
+        let x = match res.state.param {
+            ParamKind::Ndarray(value) => value,
+            _ => arr1(&[f64::NAN, f64::NAN]),
+        };
+        let gil = Python::acquire_gil();
+        let x = PyArray1::from_array(gil.python(), &x);
+        Ok(x.to_owned())
     }
 
     // fn max_iters(mut self, iters: u64) {

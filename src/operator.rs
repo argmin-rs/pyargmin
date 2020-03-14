@@ -6,13 +6,13 @@
 // copied, modified, or distributed except according to those terms.
 
 use argmin::prelude::*;
-// use ndarray::Array1;
+use ndarray::Array1;
 use numpy::*;
 use pyo3::prelude::*;
 use pyo3::types::PyAny;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct PyArgminOp {
     #[serde(skip)]
     obj: Option<PyObject>,
@@ -52,7 +52,8 @@ unsafe impl Sync for PyArgminOp {}
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub enum ParamKind {
-    Ndarray(ndarray::Array1<f64>),
+    Ndarray(Array1<f64>),
+    Scalar(f64),
     Other,
 }
 
@@ -73,11 +74,84 @@ impl ArgminMul<ParamKind, ParamKind> for f64 {
     }
 }
 
+impl ArgminMul<f64, ParamKind> for ParamKind {
+    #[inline]
+    fn mul(&self, other: &f64) -> ParamKind {
+        if let ParamKind::Ndarray(ref x) = self {
+            ParamKind::Ndarray(x * *other)
+        } else {
+            unimplemented!()
+        }
+    }
+}
+
+impl ArgminAdd<ParamKind, ParamKind> for f64 {
+    #[inline]
+    fn add(&self, other: &ParamKind) -> ParamKind {
+        if let ParamKind::Ndarray(ref y) = other {
+            ParamKind::Ndarray(self.add(y))
+        } else {
+            unimplemented!()
+        }
+    }
+}
+
+impl ArgminAdd<ParamKind, ParamKind> for ParamKind {
+    #[inline]
+    fn add(&self, other: &ParamKind) -> ParamKind {
+        if let ParamKind::Ndarray(ref y) = other {
+            if let ParamKind::Ndarray(ref x) = self {
+                ParamKind::Ndarray(x.add(y))
+            } else {
+                unimplemented!()
+            }
+        } else {
+            unimplemented!()
+        }
+    }
+}
+
+impl ArgminDot<ParamKind, ParamKind> for f64 {
+    #[inline]
+    fn dot(&self, other: &ParamKind) -> ParamKind {
+        match other {
+            ParamKind::Ndarray(ref y) => ParamKind::Ndarray(self.dot(y)),
+            _ => unimplemented!(),
+        }
+    }
+}
+
+impl ArgminDot<ParamKind, f64> for ParamKind {
+    #[inline]
+    fn dot(&self, other: &ParamKind) -> f64 {
+        if let ParamKind::Ndarray(ref y) = other {
+            if let ParamKind::Ndarray(ref x) = self {
+                x.dot(y)
+            } else {
+                unimplemented!()
+            }
+        } else {
+            unimplemented!()
+        }
+    }
+}
+
 impl ArgminSub<ParamKind, ParamKind> for ParamKind {
     #[inline]
     fn sub(&self, other: &ParamKind) -> ParamKind {
         if let (ParamKind::Ndarray(ref x), ParamKind::Ndarray(ref y)) = (self, other) {
             ParamKind::Ndarray(x.sub(y))
+        } else {
+            unimplemented!()
+        }
+    }
+}
+
+impl ArgminNorm<f64> for ParamKind {
+    #[inline]
+    fn norm(&self) -> f64 {
+        if let ParamKind::Ndarray(ref x) = self {
+            x.iter().map(|a| a.powi(2)).sum::<f64>().sqrt()
         } else {
             unimplemented!()
         }

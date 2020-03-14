@@ -4,3 +4,6 @@ python/pyargmin.so
 build
 *.egg-info
 dist/
+Cargo.lock
+__pycache__
+argmin/*.so

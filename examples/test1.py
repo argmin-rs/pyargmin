@@ -25,15 +25,18 @@ class Problem:
 
     def apply(self, param):
         """apply"""
-        out = (self.a - param[0])**2 + self.b * (param[1] - param[0]**2)**2
+        out = (self.a - param[0]) ** 2 + self.b * (param[1] - param[0] ** 2) ** 2
         return out
 
     def gradient(self, param):
         x = param[0]
         y = param[1]
         out = np.array(
-                [-2.0 * self.a + 4.0 * self.b * x**3 - 4.0 * self.b * x * y
-                 + 2.0 * x, 2.0 * self.b * (y - x**2)])
+            [
+                -2.0 * self.a + 4.0 * self.b * x ** 3 - 4.0 * self.b * x * y + 2.0 * x,
+                2.0 * self.b * (y - x ** 2),
+            ]
+        )
         return out
 
 

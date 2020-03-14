@@ -46,7 +46,7 @@ impl PyExecutor {
         Ok(())
     }
 
-    fn run(&self) -> PyResult<(Py<PyArray1<f64>>)> {
+    fn run(&self) -> PyResult<Py<PyArray1<f64>>> {
         let executor = self.exec.clone();
         let res = executor.run().unwrap();
         let x = match res.state.param {

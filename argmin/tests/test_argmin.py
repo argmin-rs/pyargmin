@@ -6,7 +6,8 @@ from numpy.testing import assert_allclose
 import argmin
 
 
-def test_rosen_lbfgs():
+@pytest.mark.parametrize('solver_name', ['lbfgs'])
+def test_rosen_lbfgs(solver_name):
     # Adapted from scipy.optimize.tests.test_optimize
 
     scipy_opt = pytest.importorskip('scipy.optimize')
@@ -26,7 +27,10 @@ def test_rosen_lbfgs():
 
     x0 = np.array([-1.2, 1.0])
 
-    solver = argmin.lbfgs(10)
+    if solver_name == 'lbfgs':
+        solver = argmin.lbfgs(10)
+    else:
+        raise NotImplementedError
 
     executor = argmin.executor(prob, solver, x0, max_iter=100)
     x_opt = executor.run()

@@ -11,6 +11,7 @@ mod operator;
 use crate::operator::ParamKind;
 use crate::operator::*;
 use argmin::prelude::*;
+use argmin::solver::landweber::Landweber;
 use argmin::solver::linesearch::MoreThuenteLineSearch;
 use argmin::solver::quasinewton::LBFGS;
 use executor::*;
@@ -20,7 +21,7 @@ use pyo3::prelude::*;
 // use pyo3::type_object::PyTypeInfo;
 use pyo3::wrap_pyfunction;
 
-type LBFGS_type = LBFGS<MoreThuenteLineSearch<ParamKind>, ParamKind>;
+type LbfgsType = LBFGS<MoreThuenteLineSearch<ParamKind>, ParamKind>;
 
 #[pyfunction]
 /// blah
@@ -31,9 +32,50 @@ fn closure(obj: PyObject) -> PyResult<()> {
     Ok(())
 }
 
+#[pyclass(name=Landweber)]
+struct PyLandweber {
+    solver: Landweber,
+}
+
+#[pymethods]
+impl PyLandweber {
+    #[new]
+    fn new(obj: &PyRawObject, omega: f64) {
+        obj.init({
+            PyLandweber {
+                solver: Landweber::new(omega),
+            }
+        });
+    }
+
+    fn set_omega(&mut self, omega: f64) {
+        println!("fufufu_{}", omega)
+    }
+}
+
+impl PyLandweber {
+    fn inner(&self) -> Landweber {
+        self.solver.clone()
+    }
+}
+
+#[pyfunction]
+/// blah
+fn landweber(omega: f64) -> Py<PyLandweber> {
+    let gil_guard = Python::acquire_gil();
+    let py = gil_guard.python();
+    Py::new(
+        py,
+        PyLandweber {
+            solver: Landweber::new(omega),
+        },
+    )
+    .unwrap()
+}
+
 #[pyclass(name=LBFGS)]
 struct PyLBFGS {
-    solver: LBFGS_type,
+    solver: LbfgsType,
 }
 
 #[pymethods]
@@ -49,7 +91,7 @@ impl PyLBFGS {
 }
 
 impl PyLBFGS {
-    fn inner(&self) -> LBFGS_type {
+    fn inner(&self) -> LbfgsType {
         self.solver.clone()
     }
 }
@@ -111,6 +153,7 @@ fn executor(
 fn _lib(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_wrapped(wrap_pyfunction!(closure))?;
     m.add_wrapped(wrap_pyfunction!(closure3))?;
+    m.add_wrapped(wrap_pyfunction!(landweber))?;
     m.add_wrapped(wrap_pyfunction!(lbfgs))?;
     m.add_wrapped(wrap_pyfunction!(executor))?;
     Ok(())

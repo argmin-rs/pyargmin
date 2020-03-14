@@ -8,7 +8,7 @@ use std::f64;
 
 use crate::operator::ParamKind;
 use crate::operator::PyArgminOp;
-use crate::{LBFGS_type, PyLBFGS};
+use crate::{LbfgsType, PyLBFGS};
 use argmin::prelude::*;
 use argmin::solver::quasinewton::LBFGS;
 use ndarray::arr1;
@@ -17,7 +17,7 @@ use pyo3::prelude::*;
 
 #[pyclass(name=Executor)]
 pub struct PyExecutor {
-    pub exec: Executor<PyArgminOp, LBFGS_type>,
+    pub exec: Executor<PyArgminOp, LbfgsType>,
 }
 
 #[pymethods]

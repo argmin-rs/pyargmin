@@ -78,9 +78,11 @@ fn closure3(func: PyObject) -> PyResult<()> {
     Ok(())
 }
 
-#[pyfunction]
+#[pyfunction(max_iter = 20)]
+/// executor(op, solver, init_param, max_iter=20)
+///
 /// Get an executor
-fn executor(op: PyObject, solver: &mut PyLBFGS, init_param: PyObject) -> Py<PyExecutor> {
+fn executor(op: PyObject, solver: &mut PyLBFGS, init_param: PyObject, max_iter: u64) -> Py<PyExecutor> {
     let gil_guard = Python::acquire_gil();
     let py = gil_guard.python();
     let init_param: &PyArray<f64, Ix1> = init_param.extract(py).unwrap();
@@ -92,7 +94,7 @@ fn executor(op: PyObject, solver: &mut PyLBFGS, init_param: PyObject) -> Py<PyEx
                 solver.inner(),
                 ParamKind::Ndarray(init_param.as_array_mut().to_owned()),
             )
-            .max_iters(20)
+            .max_iters(max_iter)
             .add_observer(ArgminSlogLogger::term(), ObserverMode::Always),
         },
     )

@@ -209,7 +209,7 @@ where
             .map_err(|e| ArgminError::ImpossibleError {
                 text: format!("Wrong return type from apply method: {:?}", e).to_string(),
             })?;
-        println!("cost: {}", out);
+        println!("ArgminOp.apply cost: {}", out);
         Ok(out)
     }
 
@@ -232,7 +232,7 @@ where
         let out: &PyArray1<f64> = bla.extract(py).map_err(|e| ArgminError::ImpossibleError {
             text: format!("Wrong return type from apply method: {:?}", e).to_string(),
         })?;
-        println!("gradient_inner: {:?}", out);
+        println!("ArgminOp.gradient: {:?}", out);
         Ok(ParamKind::Ndarray(out.as_array_mut().to_owned()))
     }
 }

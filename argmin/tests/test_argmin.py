@@ -14,21 +14,21 @@ def test_rosen():
     class Rosen():
         def apply(self, x):
             res = scipy_opt.rosen(x)
-            print('cost', x, res)
+            print('Roman.apply', x, res)
             return res
 
         def gradient(self, x):
             res = scipy_opt.rosen_der(x)
-            print('grad', x, res)
+            print('Rosen.gradient', x, res)
             return res
 
     prob = Rosen()
 
     x0 = np.array([-1.2, 1.0])
 
-    solver = argmin.landweber(1e-3)
+    solver = argmin.lbfgs(10)
 
-    executor = argmin.executor(prob, solver, x0)
+    executor = argmin.executor(prob, solver, x0, max_iter=100)
     x_opt = executor.run()
-    print("Result:", x_opt)
-    #assert_allclose(x_opt, np.array([1, 1]), rtol=1e-4)
+    print("Result x = ", x_opt)
+    assert_allclose(x_opt, np.array([1, 1]), rtol=1e-4)

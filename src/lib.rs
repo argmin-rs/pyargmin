@@ -96,8 +96,8 @@ impl PyLBFGS {
     }
 }
 
-#[pyfunction(m = "10", tol_grad = "1.0e-5")]
-/// lbfgs(m=10, tol_grad="1e-5")
+#[pyfunction(m = "10", tol_grad = "1e-5")]
+/// lbfgs(m=10, tol_grad=1e-5)
 fn lbfgs(m: usize, tol_grad: f64) -> Py<PyLBFGS> {
     let gil_guard = Python::acquire_gil();
     let py = gil_guard.python();

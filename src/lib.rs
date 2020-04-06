@@ -96,18 +96,14 @@ impl PyLBFGS {
     }
 }
 
-#[pyfunction]
-/// blah
-fn lbfgs(m: usize) -> Py<PyLBFGS> {
+#[pyfunction(m="10", tol_grad="1.0e-5")]
+/// lbfgs(m=10, tol_grad="1e-5")
+fn lbfgs(m: usize, tol_grad: f64) -> Py<PyLBFGS> {
     let gil_guard = Python::acquire_gil();
     let py = gil_guard.python();
-    Py::new(
-        py,
-        PyLBFGS {
-            solver: LBFGS::new(MoreThuenteLineSearch::new(), m),
-        },
-    )
-    .unwrap()
+    let solver = LBFGS::new(MoreThuenteLineSearch::new(), m)
+                     .with_tol_grad(tol_grad);
+    Py::new(py, PyLBFGS { solver: solver }).unwrap()
 }
 
 #[pyfunction]

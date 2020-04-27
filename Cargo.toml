@@ -23,7 +23,7 @@ crate-type = ["cdylib"]
 [dependencies]
 # argmin_core = { path = "../argmin-core" }
 # argmin = { path = "../argmin", features = ["ctrlc", "ndarrayl"]}
-argmin = {version = "0.2.6", features = ["ctrlc", "ndarrayl"]}
+argmin = {version = "0.3.0", features = ["ctrlc", "ndarrayl"]}
 pyo3 = { version = "0.8.5", features = ["extension-module"] }
 serde = "1.0"
 numpy = "0.7.0"

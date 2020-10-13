@@ -26,7 +26,7 @@ crate-type = ["cdylib"]
 argmin = {version = "0.2.6", features = ["ctrlc", "ndarrayl"]}
 pyo3 = { version = "0.8.5", features = ["extension-module"] }
 serde = "1.0"
-numpy = "0.7.0"
+numpy = "0.12.1"
 ndarray = "0.13"
 blas-src = { version = "0.4.0", default-features = false, features = ["openblas"] }
 openblas-src = { version = "0.7.0", default-features = false, features = ["cblas", "system"] }

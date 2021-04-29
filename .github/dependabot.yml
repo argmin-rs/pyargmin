@@ -1,0 +1,22 @@
+version: 2
+updates:
+- package-ecosystem: cargo
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: argmin
+    versions:
+    - 0.3.1
+    - 0.4.1
+    - 0.4.2
+  - dependency-name: pyo3
+    versions:
+    - 0.13.1
+  - dependency-name: numpy
+    versions:
+    - 0.13.0
+  - dependency-name: ndarray
+    versions:
+    - 0.14.0

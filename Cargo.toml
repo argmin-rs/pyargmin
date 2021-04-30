@@ -29,7 +29,7 @@ serde = "1.0"
 numpy = "0.7.0"
 ndarray = "0.13"
 blas-src = { version = "0.4.0", default-features = false, features = ["openblas"] }
-openblas-src = { version = "0.7.0", default-features = false, features = ["cblas", "system"] }
+openblas-src = { version = "0.10.4", default-features = false, features = ["cblas", "system"] }
 
 [badges]
 travis-ci = { repository = "argmin-rs/pyargmin", branch = "master" }
